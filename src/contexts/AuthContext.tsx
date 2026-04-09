@@ -24,8 +24,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async () => {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      if (error.code === 'auth/unauthorized-domain') {
+        alert("이 도메인은 Firebase Console의 '승인된 도메인' 목록에 추가되어야 합니다.");
+      } else if (error.code === 'auth/popup-blocked') {
+        alert("브라우저의 팝업 차단 설정을 확인해 주세요.");
+      } else {
+        alert(`로그인 실패: ${error.message}`);
+      }
+      throw error;
+    }
   };
 
   const logout = async () => {
