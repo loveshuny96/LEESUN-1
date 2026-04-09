@@ -25,7 +25,7 @@ export default function Home() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80" 
+            src="https://lh3.googleusercontent.com/d/1NpM3Teaivut4sez8GvzVoZ14YtkCwcMV" 
             alt="Background"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
