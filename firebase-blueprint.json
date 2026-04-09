@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A portfolio project item",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Project title" },
+        "category": { "type": "string", "enum": ["RESIDENCE & HOTEL", "PUBLIC & OFFICE", "COMMERCIAL", "OTHERS"], "description": "Project category" },
+        "description": { "type": "string", "description": "Project description" },
+        "tools": { "type": "array", "items": { "type": "string" }, "description": "Tools used" },
+        "mainImage": { "type": "string", "description": "Main image URL" },
+        "images": { "type": "array", "items": { "type": "string" }, "description": "Additional image URLs" },
+        "year": { "type": "string", "description": "Work year" },
+        "area": { "type": "string", "description": "Area in m2" },
+        "createdAt": { "type": "number", "description": "Creation timestamp" }
+      },
+      "required": ["title", "category", "description", "mainImage", "year", "area", "createdAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile with roles",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin", "client"] },
+        "name": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Public portfolio projects"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and roles"
+    }
+  }
+}
