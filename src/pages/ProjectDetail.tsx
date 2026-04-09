@@ -16,36 +16,46 @@ export default function ProjectDetail() {
   useEffect(() => {
     if (!id) return;
 
-    const unsubscribe = onSnapshot(doc(db, 'projects', id), async (docSnap) => {
+    // 1. Listen to Project Metadata
+    const unsubProject = onSnapshot(doc(db, 'projects', id), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data() as Project;
         setProject({ id: docSnap.id, ...data });
         
-        // Fetch images from separate collection
-        try {
-          const q = query(
-            collection(db, 'project_images'), 
-            where('projectId', '==', id),
-            orderBy('order', 'asc')
-          );
-          const snap = await getDocs(q);
-          const imgs = snap.docs.map(d => d.data().image);
-          
-          // Use separate images if found, otherwise fallback to legacy images array
-          setProjectImages(imgs.length > 0 ? imgs : (data.images || []));
-        } catch (error) {
-          console.error("Error fetching project images:", error);
-          setProjectImages(data.images || []);
-        }
+        // Legacy fallback: if no separate images found yet, use images from main doc
+        setProjectImages(prev => prev.length === 0 ? (data.images || []) : prev);
       } else {
         setProject(undefined);
       }
-      setLoading(false);
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, `projects/${id}`);
+      setLoading(false);
     });
 
-    return unsubscribe;
+    // 2. Listen to Project Images (Separate Collection)
+    const q = query(
+      collection(db, 'project_images'), 
+      where('projectId', '==', id)
+    );
+    
+    const unsubImages = onSnapshot(q, (snap) => {
+      if (!snap.empty) {
+        const docs = snap.docs.map(d => d.data());
+        // Sort client-side to avoid composite index requirement
+        docs.sort((a, b) => (a.order || 0) - (b.order || 0));
+        const imgs = docs.map(d => d.image);
+        setProjectImages(imgs);
+      }
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching project images:", error);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubProject();
+      unsubImages();
+    };
   }, [id]);
 
   if (loading) {
@@ -104,7 +114,6 @@ export default function ProjectDetail() {
               </div>
 
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 block mb-4">Tools</span>
                 <div className="flex flex-wrap gap-2">
                   {project.tools?.map((tool) => (
                     <span

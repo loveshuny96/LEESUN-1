@@ -127,9 +127,11 @@ export default function Admin() {
   const handleEdit = async (project: Project) => {
     setLoading(true);
     try {
-      const imagesQuery = query(collection(db, 'project_images'), where('projectId', '==', project.id), orderBy('order', 'asc'));
+      const imagesQuery = query(collection(db, 'project_images'), where('projectId', '==', project.id));
       const imagesSnap = await getDocs(imagesQuery);
-      const images = imagesSnap.docs.map(doc => doc.data().image);
+      const docs = imagesSnap.docs.map(doc => doc.data());
+      docs.sort((a, b) => (a.order || 0) - (b.order || 0));
+      const images = docs.map(d => d.image);
       
       setEditingProject({
         ...project,
