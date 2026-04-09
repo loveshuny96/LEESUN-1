@@ -40,10 +40,10 @@ export default function Home() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-8 text-balance text-white">
-            믿고 맡길 수 있는 3D 파트너
+            믿고 맡길 수 있는 <br className="md:hidden" /> 3D 파트너
           </h1>
           <p className="text-lg md:text-xl font-medium mb-12 text-neutral-200">
-            수정은 유연하게, 결과는 확실하게 제공해 드립니다.
+            수정은 유연하게, 결과는 확실하게 <br className="md:hidden" /> 제공해 드립니다.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link

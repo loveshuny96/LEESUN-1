@@ -45,12 +45,12 @@ export default function ProjectList() {
           <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-16 text-center">PROJECT</h1>
 
           {/* Category Tabs */}
-          <div className="flex flex-wrap justify-center gap-2 mb-20">
+          <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 mb-12 md:mb-20">
             {CATEGORIES.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-full text-xs font-bold tracking-widest transition-all ${
+                className={`px-3 py-2 md:px-6 md:py-3 rounded-full text-[10px] md:text-xs font-bold tracking-widest transition-all ${
                   selectedCategory === category
                     ? 'bg-neutral-900 text-white'
                     : 'bg-neutral-50 text-neutral-400 hover:bg-neutral-100'

@@ -36,12 +36,12 @@ export default function Navbar() {
           LEESUN
         </Link>
         
-        <div className="hidden md:flex items-center gap-12">
+        <div className="flex items-center gap-4 md:gap-12">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className={`text-sm font-medium transition-colors ${
+              className={`text-[10px] md:text-sm font-medium transition-colors ${
                 isTransparent 
                   ? 'text-white/70 hover:text-white' 
                   : location.pathname.startsWith(item.path) ? 'text-neutral-900' : 'text-neutral-400 hover:text-neutral-900'
