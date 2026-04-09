@@ -86,38 +86,33 @@ export default function Admin() {
 
     setUploading(true);
     const fileList = Array.from(files).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-    const uploadedUrls: string[] = [];
-    let mainImageUrl = editingProject.mainImage || '';
+    const base64Images: string[] = [];
 
     try {
       for (const file of fileList) {
-        console.log(`Starting upload for: ${file.name}`);
-        const uniqueId = Math.random().toString(36).substring(2, 9);
-        const storageRef = ref(storage, `projects/${Date.now()}_${uniqueId}_${file.name}`);
-        
-        const snapshot = await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(snapshot.ref);
-        uploadedUrls.push(url);
-        
-        // Auto-set main image if filename contains '2'
-        if (file.name.includes('2') && !mainImageUrl) {
-          mainImageUrl = url;
-        }
-        console.log(`Finished upload for: ${file.name}`);
+        // Convert file to Base64 string
+        const reader = new FileReader();
+        const promise = new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+        });
+        reader.readAsDataURL(file);
+        const base64 = await promise;
+        base64Images.push(base64);
       }
 
-      const newImages = [...(editingProject.images || []), ...uploadedUrls];
+      const newImages = [...(editingProject.images || []), ...base64Images];
 
       setEditingProject({
         ...editingProject,
         images: newImages,
-        mainImage: mainImageUrl || newImages[0]
+        mainImage: editingProject.mainImage || newImages[0]
       });
       
-      alert(`${uploadedUrls.length}개의 이미지가 업로드되었습니다.`);
+      alert(`${base64Images.length}개의 이미지가 준비되었습니다. 'SAVE' 버튼을 눌러 최종 저장해주세요.`);
     } catch (error: any) {
-      console.error("Upload failed:", error);
-      alert(`이미지 업로드 실패: ${error.message || '알 수 없는 오류'}`);
+      console.error("Image processing failed:", error);
+      alert("이미지 처리에 실패했습니다.");
     } finally {
       setUploading(false);
     }
