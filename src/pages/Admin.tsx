@@ -7,7 +7,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { db, storage } from '../firebase';
 import { collection, onSnapshot, query, orderBy, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import imageCompression from 'browser-image-compression';
 import { handleFirestoreError, OperationType } from '../lib/firestoreUtils';
 
 export default function Admin() {
@@ -86,42 +85,39 @@ export default function Admin() {
     if (!files || !editingProject) return;
 
     setUploading(true);
+    const fileList = Array.from(files).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+    const uploadedUrls: string[] = [];
+    let mainImageUrl = editingProject.mainImage || '';
 
     try {
-      const uploadPromises = Array.from(files).map(async (file: File) => {
-        // Image Compression Options
-        const options = {
-          maxSizeMB: 0.4, // Reduce to 400KB for faster upload
-          maxWidthOrHeight: 1600, // 1600px is plenty for web
-          useWebWorker: true,
-          initialQuality: 0.7 // Slightly lower initial quality for faster processing
-        };
-
-        let fileToUpload: File = file;
-        try {
-          const compressedFile = await imageCompression(file, options);
-          fileToUpload = new File([compressedFile], file.name, { type: compressedFile.type });
-        } catch (error) {
-          console.error("Compression failed, using original file", error);
-        }
-
+      for (const file of fileList) {
+        console.log(`Starting upload for: ${file.name}`);
         const uniqueId = Math.random().toString(36).substring(2, 9);
-        const storageRef = ref(storage, `projects/${Date.now()}_${uniqueId}_${fileToUpload.name}`);
-        const snapshot = await uploadBytes(storageRef, fileToUpload);
-        return await getDownloadURL(snapshot.ref);
-      });
+        const storageRef = ref(storage, `projects/${Date.now()}_${uniqueId}_${file.name}`);
+        
+        const snapshot = await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(snapshot.ref);
+        uploadedUrls.push(url);
+        
+        // Auto-set main image if filename contains '2'
+        if (file.name.includes('2') && !mainImageUrl) {
+          mainImageUrl = url;
+        }
+        console.log(`Finished upload for: ${file.name}`);
+      }
 
-      const uploadedUrls = await Promise.all(uploadPromises);
       const newImages = [...(editingProject.images || []), ...uploadedUrls];
 
       setEditingProject({
         ...editingProject,
         images: newImages,
-        mainImage: editingProject.mainImage || newImages[0]
+        mainImage: mainImageUrl || newImages[0]
       });
-    } catch (error) {
-      console.error("Upload failed", error);
-      alert("이미지 업로드에 실패했습니다.");
+      
+      alert(`${uploadedUrls.length}개의 이미지가 업로드되었습니다.`);
+    } catch (error: any) {
+      console.error("Upload failed:", error);
+      alert(`이미지 업로드 실패: ${error.message || '알 수 없는 오류'}`);
     } finally {
       setUploading(false);
     }
@@ -477,7 +473,7 @@ export default function Admin() {
                       {uploading ? (
                         <div className="flex flex-col items-center gap-2">
                           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-neutral-900"></div>
-                          <span className="text-[8px] font-bold text-neutral-400 animate-pulse">OPTIMIZING...</span>
+                          <span className="text-[8px] font-bold text-neutral-400 animate-pulse">UPLOADING...</span>
                         </div>
                       ) : (
                         <>
