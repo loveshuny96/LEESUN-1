@@ -14,7 +14,7 @@ export default function ProjectList() {
   const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
-    const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, 'projects'), orderBy('order', 'asc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const projs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project));
       setProjects(projs);

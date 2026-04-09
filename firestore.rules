@@ -61,7 +61,7 @@ service cloud.firestore {
     // ===============================================================
 
     function isValidProject(data) {
-      return data.keys().hasAll(['title', 'category', 'description', 'tools', 'mainImage', 'images', 'year', 'area', 'createdAt']) &&
+      return data.keys().hasAll(['title', 'category', 'description', 'tools', 'mainImage', 'images', 'year', 'area', 'createdAt', 'order']) &&
              data.title is string && data.title.size() >= 1 && data.title.size() <= 100 &&
              data.category in ['RESIDENCE & HOTEL', 'PUBLIC & OFFICE', 'COMMERCIAL', 'OTHERS'] &&
              data.description is string && data.description.size() >= 1 && data.description.size() <= 5000 &&
@@ -70,7 +70,8 @@ service cloud.firestore {
              data.images is list && data.images.size() <= 20 &&
              data.year is string && data.year.matches("^\\d{4}$") &&
              data.area is string && data.area.size() >= 1 && data.area.size() <= 50 &&
-             data.createdAt is number;
+             data.createdAt is number &&
+             data.order is number;
     }
 
     function isValidUser(data) {
@@ -89,6 +90,19 @@ service cloud.firestore {
       allow create: if isAdmin() && isValidProject(request.resource.data);
       allow update: if isAdmin() && isValidProject(request.resource.data) && 
                     request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAdmin();
+    }
+
+    match /project_images/{imageId} {
+      allow read: if true;
+      allow create: if isAdmin() && 
+                    request.resource.data.keys().hasAll(['projectId', 'image', 'order']) &&
+                    request.resource.data.projectId is string &&
+                    request.resource.data.image is string &&
+                    request.resource.data.order is number;
+      allow update: if isAdmin() &&
+                    request.resource.data.image is string &&
+                    request.resource.data.order is number;
       allow delete: if isAdmin();
     }
 

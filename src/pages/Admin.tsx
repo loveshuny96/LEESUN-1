@@ -5,7 +5,7 @@ import { Project, Category } from '../types';
 import { CATEGORIES } from '../constants';
 import { useAuth } from '../contexts/AuthContext';
 import { db, storage } from '../firebase';
-import { collection, onSnapshot, query, orderBy, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc, writeBatch, where, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { handleFirestoreError, OperationType } from '../lib/firestoreUtils';
 
@@ -82,9 +82,20 @@ export default function Admin() {
   useEffect(() => {
     if (!isAdmin) return;
 
-    const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, 'projects'), orderBy('order', 'asc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const projs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project));
+      
+      // Handle legacy projects without 'order' field
+      const needsUpdate = projs.some(p => p.order === undefined);
+      if (needsUpdate) {
+        projs.forEach(async (p, idx) => {
+          if (p.order === undefined) {
+            await updateDoc(doc(db, 'projects', p.id), { order: idx });
+          }
+        });
+      }
+
       setProjects(projs);
       setLoading(false);
     }, (error) => {
@@ -94,10 +105,59 @@ export default function Admin() {
     return unsubscribe;
   }, [isAdmin]);
 
+  const moveProject = async (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= projects.length) return;
+
+    const currentProject = projects[index];
+    const targetProject = projects[targetIndex];
+
+    try {
+      // Swap orders
+      const currentOrder = currentProject.order ?? index;
+      const targetOrder = targetProject.order ?? targetIndex;
+
+      await updateDoc(doc(db, 'projects', currentProject.id), { order: targetOrder });
+      await updateDoc(doc(db, 'projects', targetProject.id), { order: currentOrder });
+    } catch (error) {
+      console.error("Reorder failed", error);
+    }
+  };
+
+  const handleEdit = async (project: Project) => {
+    setLoading(true);
+    try {
+      const imagesQuery = query(collection(db, 'project_images'), where('projectId', '==', project.id), orderBy('order', 'asc'));
+      const imagesSnap = await getDocs(imagesQuery);
+      const images = imagesSnap.docs.map(doc => doc.data().image);
+      
+      setEditingProject({
+        ...project,
+        images: images.length > 0 ? images : (project.images || [])
+      });
+      setIsAdding(false);
+    } catch (error) {
+      console.error("Failed to load project images", error);
+      setEditingProject(project);
+      setIsAdding(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (confirm('정말 삭제하시겠습니까?')) {
       try {
         await deleteDoc(doc(db, 'projects', id));
+        
+        // Delete associated images
+        const batch = writeBatch(db);
+        const imagesQuery = query(collection(db, 'project_images'), where('projectId', '==', id));
+        const imagesSnap = await getDocs(imagesQuery);
+        imagesSnap.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+        await batch.commit();
       } catch (error) {
         handleFirestoreError(error, OperationType.DELETE, `projects/${id}`);
       }
@@ -109,7 +169,7 @@ export default function Admin() {
     if (!files || !editingProject) return;
 
     setUploading(true);
-    const fileList = Array.from(files).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+    const fileList = (Array.from(files) as File[]).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
     const base64Images: string[] = [];
 
     try {
@@ -194,24 +254,50 @@ export default function Admin() {
       return;
     }
 
-    // Check total size to prevent Firestore 1MB limit (approx 800KB for safety)
-    const totalSize = JSON.stringify(editingProject).length;
-    if (totalSize > 800000) {
-      alert('이미지 용량이 너무 큽니다. 이미지를 줄이거나 개수를 줄여주세요. (Firestore 1MB 제한)');
-      return;
-    }
-
     try {
+      let projectId = editingProject.id;
+      
+      // 1. Save Project Metadata (without images array to save space)
+      const { images, ...projectData } = editingProject;
+      
       if (isAdding) {
         const newProject = {
-          ...editingProject,
+          ...projectData,
+          images: [], // Keep empty in main doc
           createdAt: Date.now(),
+          order: projects.length > 0 ? Math.max(...projects.map(p => p.order || 0)) + 1 : 0
         };
-        await addDoc(collection(db, 'projects'), newProject);
+        const docRef = await addDoc(collection(db, 'projects'), newProject);
+        projectId = docRef.id;
       } else {
-        const { id, ...data } = editingProject;
-        await updateDoc(doc(db, 'projects', id!), data);
+        await updateDoc(doc(db, 'projects', projectId!), {
+          ...projectData,
+          images: [] // Ensure main doc stays small
+        });
       }
+
+      // 2. Sync Images to separate collection
+      const batch = writeBatch(db);
+      
+      // Delete existing images for this project
+      const existingImagesQuery = query(collection(db, 'project_images'), where('projectId', '==', projectId));
+      const existingImagesSnap = await getDocs(existingImagesQuery);
+      existingImagesSnap.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      // Add current images
+      editingProject.images?.forEach((img, idx) => {
+        const newImgRef = doc(collection(db, 'project_images'));
+        batch.set(newImgRef, {
+          projectId,
+          image: img,
+          order: idx
+        });
+      });
+
+      await batch.commit();
+
       setEditingProject(null);
       setIsAdding(false);
     } catch (error) {
@@ -317,6 +403,7 @@ export default function Admin() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-neutral-50 border-b border-neutral-100">
+                  <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-neutral-400">Sort</th>
                   <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-neutral-400">Project</th>
                   <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-neutral-400">Category</th>
                   <th className="px-8 py-6 text-xs font-bold uppercase tracking-widest text-neutral-400">Year</th>
@@ -324,8 +411,26 @@ export default function Admin() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-50">
-                {projects.map((project) => (
+                {projects.map((project, idx) => (
                   <tr key={project.id} className="hover:bg-neutral-50/50 transition-colors">
+                    <td className="px-8 py-6">
+                      <div className="flex gap-1">
+                        <button 
+                          onClick={() => moveProject(idx, 'up')}
+                          disabled={idx === 0}
+                          className="p-1.5 bg-neutral-50 rounded-lg text-neutral-400 hover:text-neutral-900 disabled:opacity-30"
+                        >
+                          <GripVertical size={14} className="rotate-90" />
+                        </button>
+                        <button 
+                          onClick={() => moveProject(idx, 'down')}
+                          disabled={idx === projects.length - 1}
+                          className="p-1.5 bg-neutral-50 rounded-lg text-neutral-400 hover:text-neutral-900 disabled:opacity-30"
+                        >
+                          <GripVertical size={14} className="-rotate-90" />
+                        </button>
+                      </div>
+                    </td>
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
                         {project.mainImage ? (
@@ -347,10 +452,7 @@ export default function Admin() {
                     <td className="px-8 py-6 text-right">
                       <div className="flex justify-end gap-2">
                         <button
-                          onClick={() => {
-                            setEditingProject(project);
-                            setIsAdding(false);
-                          }}
+                          onClick={() => handleEdit(project)}
                           className="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"
                         >
                           <Edit2 size={18} />

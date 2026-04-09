@@ -4,20 +4,39 @@ import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Project } from '../types';
 import { db } from '../firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { handleFirestoreError, OperationType } from '../lib/firestoreUtils';
 
 export default function ProjectDetail() {
   const { id } = useParams();
   const [project, setProject] = useState<Project | undefined>(undefined);
+  const [projectImages, setProjectImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
 
-    const unsubscribe = onSnapshot(doc(db, 'projects', id), (docSnap) => {
+    const unsubscribe = onSnapshot(doc(db, 'projects', id), async (docSnap) => {
       if (docSnap.exists()) {
-        setProject({ id: docSnap.id, ...docSnap.data() } as Project);
+        const data = docSnap.data() as Project;
+        setProject({ id: docSnap.id, ...data });
+        
+        // Fetch images from separate collection
+        try {
+          const q = query(
+            collection(db, 'project_images'), 
+            where('projectId', '==', id),
+            orderBy('order', 'asc')
+          );
+          const snap = await getDocs(q);
+          const imgs = snap.docs.map(d => d.data().image);
+          
+          // Use separate images if found, otherwise fallback to legacy images array
+          setProjectImages(imgs.length > 0 ? imgs : (data.images || []));
+        } catch (error) {
+          console.error("Error fetching project images:", error);
+          setProjectImages(data.images || []);
+        }
       } else {
         setProject(undefined);
       }
@@ -102,7 +121,7 @@ export default function ProjectDetail() {
 
           {/* Image Gallery */}
           <div className="lg:col-span-8 space-y-8">
-            {project.images?.filter(img => img && img.trim() !== '').map((img, idx) => (
+            {projectImages.filter(img => img && img.trim() !== '').map((img, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}

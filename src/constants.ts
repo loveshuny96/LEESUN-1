@@ -14,7 +14,8 @@ export const INITIAL_PROJECTS: Project[] = [
     ],
     year: '2024',
     area: '120㎡',
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    order: 0
   },
   {
     id: '2',
@@ -28,7 +29,8 @@ export const INITIAL_PROJECTS: Project[] = [
     ],
     year: '2023',
     area: '250㎡',
-    createdAt: Date.now() - 10000
+    createdAt: Date.now() - 10000,
+    order: 1
   }
 ];
 

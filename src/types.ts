@@ -11,4 +11,5 @@ export interface Project {
   year: string;
   area: string;
   createdAt: number;
+  order: number;
 }
