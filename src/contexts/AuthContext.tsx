@@ -28,9 +28,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     } catch (error: any) {
-      console.error("Login failed:", error);
+      console.error("Login failed full error:", error);
       if (error.code === 'auth/unauthorized-domain') {
-        alert("이 도메인은 Firebase Console의 '승인된 도메인' 목록에 추가되어야 합니다.");
+        alert(`이 도메인은 Firebase Console의 '승인된 도메인' 목록에 추가되어야 합니다.\n\n현재 도메인: ${window.location.hostname}`);
       } else if (error.code === 'auth/popup-blocked') {
         alert("브라우저의 팝업 차단 설정을 확인해 주세요.");
       } else {
