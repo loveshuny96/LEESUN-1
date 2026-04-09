@@ -19,6 +19,30 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
+  // Helper to compress image using Canvas
+  const compressImage = (base64Str: string, maxWidth = 1200, quality = 0.7): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = (maxWidth / width) * height;
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+    });
+  };
+
   // Check Admin Role
   useEffect(() => {
     if (!user) {
@@ -98,7 +122,10 @@ export default function Admin() {
         });
         reader.readAsDataURL(file);
         const base64 = await promise;
-        base64Images.push(base64);
+        
+        // Compress the Base64 string to keep document size small
+        const compressedBase64 = await compressImage(base64);
+        base64Images.push(compressedBase64);
       }
 
       const newImages = [...(editingProject.images || []), ...base64Images];
@@ -164,6 +191,13 @@ export default function Admin() {
 
     if (!editingProject.mainImage || editingProject.mainImage.trim() === '') {
       alert('대표 이미지를 업로드해 주세요.');
+      return;
+    }
+
+    // Check total size to prevent Firestore 1MB limit (approx 800KB for safety)
+    const totalSize = JSON.stringify(editingProject).length;
+    if (totalSize > 800000) {
+      alert('이미지 용량이 너무 큽니다. 이미지를 줄이거나 개수를 줄여주세요. (Firestore 1MB 제한)');
       return;
     }
 

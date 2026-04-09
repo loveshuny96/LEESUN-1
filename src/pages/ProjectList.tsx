@@ -11,6 +11,7 @@ export default function ProjectList() {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'ALL'>('ALL');
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
     const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
@@ -18,8 +19,11 @@ export default function ProjectList() {
       const projs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project));
       setProjects(projs);
       setLoading(false);
-    }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, 'projects');
+      setError(null);
+    }, (err) => {
+      console.error("Firestore error:", err);
+      setError("데이터를 불러오는 중 오류가 발생했습니다.");
+      setLoading(false);
     });
 
     return unsubscribe;
@@ -61,6 +65,16 @@ export default function ProjectList() {
           {loading ? (
             <div className="py-40 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-neutral-900 mx-auto"></div>
+            </div>
+          ) : error ? (
+            <div className="py-40 text-center">
+              <p className="text-red-500 font-medium">{error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="mt-4 px-6 py-2 bg-neutral-900 text-white rounded-full text-xs font-bold"
+              >
+                새로고침
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">

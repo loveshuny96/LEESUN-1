@@ -52,8 +52,8 @@ service cloud.firestore {
       return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
     }
 
-    function isValidUrl(url) {
-      return url is string && (url.matches("^https://.*") || url.matches("^http://.*"));
+    function isValidImage(img) {
+      return img is string && (img.matches("^https://.*") || img.matches("^http://.*") || img.matches("^data:image/.*"));
     }
 
     // ===============================================================
@@ -64,12 +64,12 @@ service cloud.firestore {
       return data.keys().hasAll(['title', 'category', 'description', 'tools', 'mainImage', 'images', 'year', 'area', 'createdAt']) &&
              data.title is string && data.title.size() >= 1 && data.title.size() <= 100 &&
              data.category in ['RESIDENCE & HOTEL', 'PUBLIC & OFFICE', 'COMMERCIAL', 'OTHERS'] &&
-             data.description is string && data.description.size() >= 1 && data.description.size() <= 2000 &&
-             data.tools is list && data.tools.size() <= 10 &&
-             isValidUrl(data.mainImage) &&
+             data.description is string && data.description.size() >= 1 && data.description.size() <= 5000 &&
+             data.tools is list && data.tools.size() <= 20 &&
+             isValidImage(data.mainImage) &&
              data.images is list && data.images.size() <= 20 &&
              data.year is string && data.year.matches("^\\d{4}$") &&
-             data.area is string && data.area.size() >= 1 && data.area.size() <= 20 &&
+             data.area is string && data.area.size() >= 1 && data.area.size() <= 50 &&
              data.createdAt is number;
     }
 
