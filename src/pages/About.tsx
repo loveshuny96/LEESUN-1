@@ -15,7 +15,7 @@ export default function About() {
           
           <div className="space-y-12 mb-24">
             <p className="text-2xl md:text-3xl leading-snug tracking-tight text-neutral-800">
-              협업이 편한 3D파트너 이선입니다.
+              협업이 편한 3D 파트너 <br className="md:hidden" /> 이선입니다.
             </p>
             <p className="text-lg md:text-xl leading-relaxed text-neutral-500 max-w-2xl">
               단순한 이미지 제작이 아닌 실제 목적에 맞는 공간을 구현하는 것을 목표로 합니다. 

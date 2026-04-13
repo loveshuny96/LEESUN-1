@@ -33,12 +33,12 @@ export default function Home() {
           />
           {/* Mobile Background */}
           <img 
-            src="https://lh3.googleusercontent.com/d/1oDIPf882VNM3BJq8QuWrTJwZYN7o3aTJ" 
+            src="https://lh3.googleusercontent.com/d/1b-82lQhSxaQiGI-ryBF9DelLrfnlt3Yj" 
             alt="Background Mobile"
             className="block md:hidden w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-black/50" /> {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-black/30 md:bg-black/50" /> {/* Adjusted overlay for mobile brightness */}
         </div>
 
         <motion.div
@@ -47,8 +47,8 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h1 className="text-5xl md:text-7xl font-bold mb-8 text-balance text-white">
-            믿고 맡기는 <br className="md:hidden" /> 든든한 3D 파트너
+          <h1 className="text-5xl md:text-7xl font-bold mb-8 text-balance text-white leading-tight tracking-tighter">
+            믿고 맡기는 <br className="lg:hidden" /> 든든한 3D 파트너
           </h1>
           <p className="text-lg md:text-xl font-medium mb-12 text-neutral-200">
             단순 제작이 아닌 <br className="md:hidden" /> 공간의 목적과 사용성을 반영합니다.
