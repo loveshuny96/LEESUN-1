@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { MessageSquare } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function FloatingCTA() {
@@ -9,13 +9,15 @@ export default function FloatingCTA() {
       animate={{ opacity: 1, y: 0 }}
       className="fixed bottom-8 right-8 z-50"
     >
-      <Link
-        to="/contact"
-        className="flex items-center gap-3 bg-neutral-900 text-white px-6 py-4 rounded-full shadow-2xl hover:bg-neutral-800 transition-all group"
+      <a
+        href="http://pf.kakao.com/_xadvEX"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-3 bg-[#FEE500] text-neutral-900 px-6 py-4 rounded-full shadow-2xl hover:bg-[#FADA0A] transition-all group"
       >
-        <MessageSquare size={20} className="group-hover:scale-110 transition-transform" />
-        <span className="font-medium text-sm">Contact</span>
-      </Link>
+        <MessageCircle size={20} fill="currentColor" className="group-hover:scale-110 transition-transform" />
+        <span className="font-bold text-sm">Kakao Talk</span>
+      </a>
     </motion.div>
   );
 }

@@ -24,10 +24,18 @@ export default function Home() {
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
+          {/* PC Background */}
           <img 
             src="https://lh3.googleusercontent.com/d/1tneihs_Lmoy_J_15V5TZW1JvZjWrGE5s" 
-            alt="Background"
-            className="w-full h-full object-cover"
+            alt="Background PC"
+            className="hidden md:block w-full h-full object-cover"
+            referrerPolicy="no-referrer"
+          />
+          {/* Mobile Background */}
+          <img 
+            src="https://lh3.googleusercontent.com/d/1oDIPf882VNM3BJq8QuWrTJwZYN7o3aTJ" 
+            alt="Background Mobile"
+            className="block md:hidden w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-black/50" /> {/* Dark overlay for readability */}
@@ -40,10 +48,10 @@ export default function Home() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-8 text-balance text-white">
-            믿고 맡길 수 있는 <br className="md:hidden" /> 3D 파트너
+            믿고 맡기는 <br className="md:hidden" /> 든든한 3D 파트너
           </h1>
           <p className="text-lg md:text-xl font-medium mb-12 text-neutral-200">
-            수정은 유연하게, 결과는 확실하게 <br className="md:hidden" /> 제공해 드립니다.
+            단순 제작이 아닌 <br className="md:hidden" /> 공간의 목적과 사용성을 반영합니다.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link

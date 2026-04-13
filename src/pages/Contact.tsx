@@ -50,7 +50,12 @@ export default function Contact() {
                     <span className="text-lg font-bold">hshsh0230@naver.com</span>
                   </div>
                 </a>
-                <div className="flex items-center gap-4 p-6 border border-neutral-100 rounded-2xl hover:bg-neutral-50 transition-all group cursor-pointer">
+                <a
+                  href="http://pf.kakao.com/_xadvEX"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-6 border border-neutral-100 rounded-2xl hover:bg-neutral-50 transition-all group"
+                >
                   <div className="w-12 h-12 bg-[#FEE500] text-neutral-900 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                     <MessageCircle size={20} fill="currentColor" />
                   </div>
@@ -58,7 +63,7 @@ export default function Contact() {
                     <span className="block text-xs text-neutral-400 font-bold uppercase tracking-widest mb-1">Kakao Channel</span>
                     <span className="text-lg font-bold">LEESUN</span>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
 

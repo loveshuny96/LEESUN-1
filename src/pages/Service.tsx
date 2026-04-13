@@ -5,7 +5,7 @@ export default function Service() {
     {
       title: '제공 항목',
       items: [
-        '스케치업 원본 파일 제공',
+        '스케치업 파일 제공',
         '렌더링 컷 제한 없이 제작 (이벤트 ~2026.09)',
       ],
     },
