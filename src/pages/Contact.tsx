@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Mail, MessageCircle, FileText, CheckCircle } from 'lucide-react';
+import { Mail, MessageCircle, FileText, CheckCircle, Instagram } from 'lucide-react';
 
 export default function Contact() {
   const materials = [
@@ -31,8 +31,8 @@ export default function Contact() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
             {/* Left Side: Info */}
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-8">CONTACT</h1>
-              <p className="text-xl md:text-2xl font-medium text-neutral-800 mb-12 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-normal md:tracking-tight lg:tracking-tighter mb-8">CONTACT</h1>
+              <p className="text-lg sm:text-xl md:text-2xl font-medium text-neutral-800 mb-12 leading-tight tracking-normal">
                 빠른 작업 상담이 필요하신가요? <br />
                 자료를 보내주시면 바로 검토 후 답변드립니다.
               </p>
@@ -64,6 +64,20 @@ export default function Contact() {
                     <span className="text-lg font-bold">LEESUN</span>
                   </div>
                 </a>
+                <a
+                  href="https://www.instagram.com/leesun_3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-6 border border-neutral-100 rounded-2xl hover:bg-neutral-50 transition-all group"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Instagram size={20} />
+                  </div>
+                  <div>
+                    <span className="block text-xs text-neutral-400 font-bold uppercase tracking-widest mb-1">Instagram</span>
+                    <span className="text-lg font-bold">@leesun_3D</span>
+                  </div>
+                </a>
               </div>
             </div>
 
@@ -71,7 +85,7 @@ export default function Contact() {
             <div className="bg-neutral-50 p-10 md:p-16 rounded-[2.5rem]">
               <div className="flex items-center gap-3 mb-10">
                 <FileText size={24} className="text-neutral-900" />
-                <h2 className="text-2xl font-bold tracking-tight">준비 자료 안내</h2>
+                <h2 className="text-xl sm:text-2xl font-bold tracking-normal">준비 자료 안내</h2>
               </div>
 
               <div className="space-y-12">

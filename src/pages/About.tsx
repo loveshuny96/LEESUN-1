@@ -11,10 +11,10 @@ export default function About() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-16">ABOUT</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-normal md:tracking-tight lg:tracking-tighter mb-16">ABOUT</h1>
           
           <div className="space-y-12 mb-24">
-            <p className="text-2xl md:text-3xl leading-snug tracking-tight text-neutral-800">
+            <p className="text-xl sm:text-2xl md:text-3xl leading-snug tracking-normal md:tracking-tight text-neutral-800">
               협업이 편한 3D 파트너 <br className="md:hidden" /> 이선입니다.
             </p>
             <p className="text-lg md:text-xl leading-relaxed text-neutral-500 max-w-2xl">

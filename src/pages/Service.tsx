@@ -43,7 +43,7 @@ export default function Service() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-24">SERVICE</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-normal md:tracking-tight lg:tracking-tighter mb-24">SERVICE</h1>
 
           {/* Work Info */}
           <section className="mb-40">
@@ -86,7 +86,7 @@ export default function Service() {
             <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-12">Pricing</h2>
             <div className="bg-neutral-900 text-white p-12 md:p-20 rounded-[2rem]">
               <div className="max-w-2xl">
-                <h3 className="text-3xl md:text-4xl font-bold mb-8">기본 정책</h3>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 tracking-normal md:tracking-tight">기본 정책</h3>
                 <p className="text-xl md:text-2xl text-neutral-400 mb-12 leading-relaxed">
                   프로젝트 기준 견적 진행 <br />
                   참고 단가: <span className="text-white">평당 9,000원~</span>

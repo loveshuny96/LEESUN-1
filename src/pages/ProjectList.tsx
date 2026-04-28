@@ -42,7 +42,7 @@ export default function ProjectList() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-16 text-center">PROJECT</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-normal md:tracking-tight lg:tracking-tighter mb-16 text-center">PORTFOLIO</h1>
 
           {/* Category Tabs */}
           <div className="flex flex-wrap justify-center gap-1.5 md:gap-2 mb-12 md:mb-20">

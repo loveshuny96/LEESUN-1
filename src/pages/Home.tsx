@@ -26,19 +26,19 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           {/* PC Background */}
           <img 
-            src="https://lh3.googleusercontent.com/d/1tneihs_Lmoy_J_15V5TZW1JvZjWrGE5s" 
+            src="https://lh3.googleusercontent.com/d/1H-6ewYYwgassgkmCrkprb4c1ykNaxCIa" 
             alt="Background PC"
             className="hidden md:block w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
           {/* Mobile Background */}
           <img 
-            src="https://lh3.googleusercontent.com/d/1b-82lQhSxaQiGI-ryBF9DelLrfnlt3Yj" 
+            src="https://lh3.googleusercontent.com/d/1H-6ewYYwgassgkmCrkprb4c1ykNaxCIa" 
             alt="Background Mobile"
             className="block md:hidden w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-black/30 md:bg-black/50" /> {/* Adjusted overlay for mobile brightness */}
+          <div className="absolute inset-0 bg-black/40" />
         </div>
 
         <motion.div
@@ -47,25 +47,25 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h1 className="text-5xl md:text-7xl font-bold mb-8 text-balance text-white leading-tight tracking-tighter">
-            믿고 맡기는 <br className="lg:hidden" /> 든든한 3D 파트너
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 text-balance text-white leading-tight tracking-normal lg:tracking-tighter">
+            빠르고 수정 편한 <br className="lg:hidden" /> 3D 파트너
           </h1>
-          <p className="text-lg md:text-xl font-medium mb-12 text-neutral-200">
-            단순 제작이 아닌 <br className="md:hidden" /> 공간의 목적과 사용성을 반영합니다.
+          <p className="text-base sm:text-lg md:text-xl font-medium mb-12 text-neutral-200 tracking-wide">
+            합리적인 비용으로 <br className="lg:hidden" /> 빠른 결과물을 제공합니다.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              to="/project"
+              to="/portfolio"
               className="px-8 py-4 bg-white text-neutral-900 rounded-full font-medium hover:bg-neutral-100 transition-all flex items-center gap-2 group"
             >
-              WORK
+              포트폴리오
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               to="/contact"
               className="px-8 py-4 border border-white/30 text-white rounded-full font-medium hover:bg-white/10 transition-all"
             >
-              CONTACT
+              문의하기
             </Link>
           </div>
         </motion.div>
@@ -86,7 +86,7 @@ export default function Home() {
               >
                 <div className="flex items-center gap-3">
                   <CheckCircle2 size={24} className="text-neutral-900" />
-                  <h3 className="text-xl font-bold tracking-tight">{item.title}</h3>
+                  <h3 className="text-lg md:text-xl font-bold tracking-normal">{item.title}</h3>
                 </div>
                 <p className="text-neutral-500 leading-relaxed whitespace-pre-line text-sm md:text-base">
                   {item.desc}

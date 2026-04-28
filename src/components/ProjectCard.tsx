@@ -16,7 +16,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       transition={{ duration: 0.4 }}
       className="group"
     >
-      <Link to={`/project/${project.id}`} className="block">
+      <Link to={`/portfolio/${project.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-neutral-100">
           {project.mainImage ? (
             <img

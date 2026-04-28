@@ -15,7 +15,7 @@ export default function Footer() {
           <div>
             <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-6">Menu</h3>
             <ul className="space-y-4">
-              <li><Link to="/project" className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">Project</Link></li>
+              <li><Link to="/portfolio" className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">Portfolio</Link></li>
               <li><Link to="/about" className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">About</Link></li>
               <li><Link to="/service" className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">Service</Link></li>
               <li><Link to="/contact" className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">Contact</Link></li>
@@ -26,6 +26,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="text-sm text-neutral-600">hshsh0230@naver.com</li>
               <li className="text-sm text-neutral-600">KaKao: LEESUN</li>
+              <li className="text-sm text-neutral-600">Instagram: @leesun_3D</li>
               <li><Link to="/admin" className="text-xs text-neutral-300 hover:text-neutral-500 transition-colors">Admin</Link></li>
             </ul>
           </div>

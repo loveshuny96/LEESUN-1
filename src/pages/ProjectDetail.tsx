@@ -70,7 +70,7 @@ export default function ProjectDetail() {
     return (
       <div className="pt-40 text-center">
         <p>프로젝트를 찾을 수 없습니다.</p>
-        <Link to="/project" className="text-neutral-500 underline mt-4 block">목록으로 돌아가기</Link>
+        <Link to="/portfolio" className="text-neutral-500 underline mt-4 block">목록으로 돌아가기</Link>
       </div>
     );
   }
@@ -79,11 +79,11 @@ export default function ProjectDetail() {
     <div className="pt-20">
       <div className="max-w-7xl mx-auto px-6 py-20">
         <Link
-          to="/project"
+          to="/portfolio"
           className="inline-flex items-center gap-2 text-sm font-medium text-neutral-400 hover:text-neutral-900 transition-colors mb-12 group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          BACK TO PROJECTS
+          BACK TO PORTFOLIO
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
